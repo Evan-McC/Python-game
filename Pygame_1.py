@@ -54,7 +54,7 @@ class Player(pygame.sprite.Sprite):
         if keystate[pygame.K_LEFT]:
             self.acc.x += -PLAYER_ACC
         if self.vel.y == 0 and keystate[pygame.K_SPACE]:
-            self.vel.y = -20
+            self.vel.y = -12
 
         #Apply friction in the x direction
         self.acc.x += self.vel.x * PLAYER_FRICTION
