@@ -3,8 +3,8 @@ import random
 import os
 
 #Constants
-WIDTH = 400
-HEIGHT = 400
+WIDTH = 750
+HEIGHT = 500
 FPS = 30
 GROUND = HEIGHT - 30
 SLOW = 3
@@ -27,8 +27,14 @@ BLUE = (0, 0, 255)
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, "img")
 
-#Applying friction on x-axis
-
+#Draw Text
+font_name = pygame.font.match_font("arial")
+def draw_text (screen, text, size, x, y):
+    font = pygame.font.Font(font_name, size)
+    text_surface = font.render(text, True, WHITE)
+    text_rect = text_surface.get_rect()
+    text_rect.topleft = (x, y)
+    screen.blit (text_surface, text_rect)
 
 #Player Class
 class Player(pygame.sprite.Sprite):
