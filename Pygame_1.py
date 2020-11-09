@@ -1,6 +1,7 @@
 import pygame
 import random
 import os
+
 #Constants
 WIDTH = 400
 HEIGHT = 400
@@ -36,8 +37,6 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load(os.path.join(img_folder, "Character.png")).convert()
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH / 2, HEIGHT / 2)
-        self.y_speed = 5
 
         self.pos = vec(10, GROUND - 60)
         self.vel = vec(0,0)
@@ -49,16 +48,11 @@ class Player(pygame.sprite.Sprite):
         
         #Return List of Keys pressed
         keystate = pygame.key.get_pressed()
-
-        #Keys to press
+        
         if keystate[pygame.K_RIGHT]:
             self.acc.x += PLAYER_ACC
         if keystate[pygame.K_LEFT]:
             self.acc.x += -PLAYER_ACC
-        if keystate[pygame.K_UP]:
-            self.rect.y += -5
-        if keystate[pygame.K_DOWN]:
-            self.rect.y += 5
         if self.vel.y == 0 and keystate[pygame.K_SPACE]:
             self.vel.y = -20
 
@@ -81,7 +75,7 @@ class Player(pygame.sprite.Sprite):
             self.vel.y = 0
 
         #Set the new player position based on above
-            self.rect.midbottom = self.pos
+        self.rect.midbottom = self.pos
 
 #Platform Class
 class Platform(pygame.sprite.Sprite):
@@ -94,7 +88,7 @@ class Platform(pygame.sprite.Sprite):
         self.rect.y = HEIGHT - 80
 
     def update(self):
-        self.rect.x += -5
+        self.rect.x += -3
         if self.rect.right < 0:
             self.rect.left = WIDTH
         
