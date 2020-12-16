@@ -30,12 +30,29 @@ snd_folder = os.path.join(game_folder, "snd")
 
 #Draw Text
 font_name = pygame.font.match_font("arial")
-def draw_text (screen, text, size, x, y):
+def draw_text (surf, text, size, x, y):
     font = pygame.font.Font(font_name, size)
-    text_surface = font.render(text, True, WHITE)
+    text_surface = font.render(text, True, RED)
     text_rect = text_surface.get_rect()
-    text_rect.topleft = (x, y)
+    text_rect.midtop = (x, y)
     screen.blit (text_surface, text_rect)
+
+#Show start screen function
+def show_start_screen():
+    screen.fill(WHITE)
+    draw_text(screen, "Game_Title", 64, WIDTH / 2, HEIGHT / 4)
+    draw_text(screen, "Move around with the WASD keys", 22, WIDTH / 2, HEIGHT / 2)    
+    draw_text(screen, "Press any key to begin...", 18, WIDTH /2, HEIGHT *3 / 4)
+    pygame.display.flip()
+    waiting = True
+    while waiting:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYUP:
+                print("Game Start")
+                waiting = False
 
 #Player Class
 class Player(pygame.sprite.Sprite):
@@ -54,13 +71,13 @@ class Player(pygame.sprite.Sprite):
         #Return List of Keys pressed
         keystate = pygame.key.get_pressed()
         
-        if keystate[pygame.K_RIGHT]:
+        if keystate[pygame.K_d]:
             self.acc.x += PLAYER_ACC
-        if keystate[pygame.K_LEFT]:
+        if keystate[pygame.K_a]:
             self.acc.x += -PLAYER_ACC
-        if keystate[pygame.K_UP]:
+        if keystate[pygame.K_w]:
             self.vel.y = -1
-        if keystate[pygame.K_DOWN]:
+        if keystate[pygame.K_s]:
             self.vel.y += 1
 
         #Apply friction in the x direction
@@ -148,11 +165,12 @@ pygame.display.set_caption("First Pygame")
 
 clock = pygame.time.Clock()
 
-pygame.mixer.music.play(loops = -1) #continuous looping
 
 #Load Sounds
-pygame.mixer.music.load(os.path.join(snd_folder, "ArcadeAuto.wav"))
+pygame.mixer.music.load(os.path.join(snd_folder, "416488__vabsounds__arcadeauto.wav"))
 pygame.mixer.music.set_volume(0.4)
+
+pygame.mixer.music.play(loops = -1) #continuous looping
 
 #Sprite Groups
 all_sprites = pygame.sprite.Group()
@@ -176,8 +194,14 @@ all_sprites.add(platform_3)
     # Update
     #Draw
 
+start = True
 running = True
 while running:
+
+    #Show start screen once
+    if start:
+        show_start_screen()
+        start = False
 
     clock.tick(FPS)
 
