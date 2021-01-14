@@ -1,0 +1,197 @@
+import pygame
+import random
+import os
+
+#Constants
+WIDTH = 800
+HEIGHT = 500
+FPS = 30
+GROUND = HEIGHT - 30
+SLOW = 3
+FAST = 10
+
+#Constant Physics
+'''
+PLAYER_ACC = 0.9
+PLAYER_FRICTION = -0.12
+PLAYER_GRAV = 0.9
+vec = pygame.math.Vector2
+'''
+
+#Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+
+#Asset
+game_folder = os.path.dirname(__file__)
+img_folder = os.path.join(game_folder, "img")
+snd_folder = os.path.join(game_folder, "snd")
+
+#Draw Text
+font_name = pygame.font.match_font("arial")
+def draw_text (surf, text, size, x, y):
+    font = pygame.font.Font(font_name, size)
+    text_surface = font.render(text, True, RED)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    screen.blit (text_surface, text_rect)
+
+#Show start screen function
+def show_start_screen():
+    screen.fill(WHITE)
+    draw_text(screen, "Game_Title", 64, WIDTH / 2, HEIGHT / 4)
+    draw_text(screen, "Move around with the Mouse", 22, WIDTH / 2, HEIGHT / 2)    
+    draw_text(screen, "Press any key to begin...", 18, WIDTH /2, HEIGHT *3 / 4)
+    pygame.display.flip()
+    waiting = True
+    while waiting:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYUP:
+                print("Game Start")
+                waiting = False
+
+#Player Class
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join(img_folder, "Character.png")).convert()
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.center = (WIDTH / 2, HEIGHT / 2)
+
+        '''
+        self.pos = vec(10, GROUND - 60)
+        self.vel = vec(0,0)
+        self.acc = vec(0,0)
+        '''
+        
+    def update(self):
+        
+        #Return List of Keys pressed
+        keystate = pygame.key.get_pressed()
+        
+        if keystate[pygame.K_d]:
+            self.rect.x += 5
+        if keystate[pygame.K_a]:
+            self.rect.x += -5
+        if keystate[pygame.K_w]:
+            self.rect.y += -5
+        if keystate[pygame.K_s]:
+            self.rect.y += 5
+
+        '''
+        #Apply friction in the x direction
+        self.acc.x += self.vel.x * PLAYER_FRICTION
+
+        #Equations of Motion
+        self.vel += self.acc
+        self.pos += self.vel + 0.5 * self.acc
+        '''
+
+        
+        #Wrap arpund the screen
+        if self.rect.left > WIDTH:
+            self.rect.right = 0
+        if self.rect.right < 0:
+            self.rect.left = WIDTH
+
+        if self.rect.bottom > HEIGHT:
+            self.rect.top = 0
+        if self.rect.top < 0:
+            self.rect.bottom = HEIGHT
+        
+        
+        '''
+        #Simulate the Ground
+        if self.pos.y > GROUND:
+            self.pos.y = GROUND + 1w
+            self.vel.y = 0
+        
+        #Set the new player position based on above
+        self.rect.midbottom = self.pos
+        '''
+        
+#Hand Class
+class Hand(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join(img_folder, "Hand.png")).convert()
+        self.rect = self.image.get_rect()
+    def update (self):
+        pos = pygame.mouse.get_pos()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+        
+#Floor Class
+class Floor(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface ((WIDTH, 25))
+        self.image.fill(WHITE)
+        self.rect = self.image.get_rect()
+        self.rect.x = WIDTH
+        self.rect.y = HEIGHT - 475
+
+        
+#Variables
+    #Start Game
+pygame.init()
+pygame.mixer.init()
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("First Pygame")
+
+clock = pygame.time.Clock()
+
+
+#Load Sounds
+
+
+#Sprite Groups
+all_sprites = pygame.sprite.Group()
+player = Player()
+all_sprites.add(player)
+
+hand = Hand()
+all_sprites.add(hand)
+
+floor = Floor()
+all_sprites.add(floor)
+
+#Game Loop:
+    #Process Events
+    # Update
+    #Draw
+
+start = True
+running = True
+while running:
+
+    #Show start screen once
+    if start:
+        show_start_screen()
+        start = False
+
+    clock.tick(FPS)
+
+    #Process Events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    #Update
+    all_sprites.update()
+    
+    #Draw
+    screen.fill (BLACK)
+    all_sprites.draw(screen)
+    
+    #Flip
+    pygame.display.flip()
+
+pygame.quit()
